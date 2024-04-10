@@ -11,10 +11,11 @@ public class Movement : MonoBehaviour
 
     private Rigidbody2D rb;
     private bool isGrounded;
-
+    private Animator playerAnimator; 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerAnimator = GetComponent<Animator>();
     }
 
     void Update()
@@ -25,11 +26,15 @@ public class Movement : MonoBehaviour
         // Horizontal movement
         float moveInput = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
-
+        if(rb.velocity.x > 0)
+        {
+            playerAnimator.SetTrigger("Run");
+        }
         // Jumping
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            playerAnimator.SetTrigger("Jump");
         }
     }
 }
