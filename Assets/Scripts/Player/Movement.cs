@@ -10,31 +10,34 @@ public class Movement : MonoBehaviour
     public LayerMask groundLayer;
 
     private Rigidbody2D rb;
-    private bool isGrounded;
-    private Animator playerAnimator; 
+    public bool isGrounded;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        playerAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
         // Check if the ball is on the ground
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-
-        // Horizontal movement
-        float moveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
-        if(rb.velocity.x > 0)
+        Run();
+        if(Input.GetKeyDown(KeyCode.Space)) 
         {
-            playerAnimator.SetTrigger("Run");
+            Jump();
         }
-        // Jumping
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+    }
+
+    public void Jump()
+    {
+        if (isGrounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            playerAnimator.SetTrigger("Jump");
         }
+    }
+
+    public void Run()
+    {
+        float moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
     }
 }

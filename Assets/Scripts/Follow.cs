@@ -10,7 +10,7 @@ public class Follow : MonoBehaviour
     public bool followRotation;
     public Vector2 rotationOffset;
     public bool followPosition;
-    public Vector2 positionOffset;
+    public Vector3 positionOffset;
 
     private void Start()
     {
