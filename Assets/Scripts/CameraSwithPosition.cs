@@ -15,10 +15,26 @@ public class CameraSwithPosition : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector3 playerViewportPos = mainCamera.WorldToViewportPoint(player.position);
         if (IsObjectOutOfSight(player.position))
         {
             Debug.Log("Object is out of camera sight!");
-            mainCamera.transform.position = new Vector3(player.position.x,player.position.y,mainCamera.transform.position.z);
+            //mainCamera.transform.position = new Vector3(player.position.x, player.position.y, mainCamera.transform.position.z);
+            if(playerViewportPos.x <0.5)
+            {
+                Debug.Log("player is on left side");
+                mainCamera.transform.position = new Vector3(player.position.x-7, player.position.y+3f, mainCamera.transform.position.z);
+            }
+
+            else if(playerViewportPos.y <0.5) 
+            {
+                mainCamera.transform.position = new Vector3(player.position.x + 7, player.position.y + 3f, mainCamera.transform.position.z);
+            }
+
+            else
+            {
+                mainCamera.transform.position = new Vector3(player.position.x, player.position.y, mainCamera.transform.position.z);
+            }
         }
         else
         {
