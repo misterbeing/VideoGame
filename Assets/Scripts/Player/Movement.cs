@@ -11,10 +11,13 @@ public class Movement : MonoBehaviour
     private Transform thisPlayersTransform;
     private Animator playerAnimator;
 
+    private Transform initialPosition;
+
     private Rigidbody2D rb;
     public bool isGrounded;
     void Start()
     {
+        initialPosition = this.transform;
         rb = GetComponent<Rigidbody2D>();
         thisPlayersTransform = this.transform;
         playerAnimator = GetComponent<Animator>();
@@ -24,11 +27,13 @@ public class Movement : MonoBehaviour
     {
         // Check if the ball is on the ground
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-        Run();
-        if(Input.GetKeyDown(KeyCode.Space)) 
+        float moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        if (Input.GetKeyDown(KeyCode.Space)) 
         {
             Jump();
         }
+        playeAnimations();
     }
 
     public void Jump()
@@ -38,25 +43,45 @@ public class Movement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
     }
-
-    public void Run()
+    void playeAnimations()
     {
-        float moveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
-        if (rb.velocity.x > 0 )
+        if (isGrounded) 
         {
-            thisPlayersTransform.rotation =new Quaternion(thisPlayersTransform.rotation.x,0, thisPlayersTransform.rotation.y, thisPlayersTransform.rotation.x);
-            playerAnimator.SetBool("run", true);
+            if (rb.velocity.x > 0)
+            {
+                thisPlayersTransform.rotation = new Quaternion(thisPlayersTransform.rotation.x, 0, thisPlayersTransform.rotation.y, thisPlayersTransform.rotation.x);
+                playerAnimator.SetBool("run", true);
+            }
+
+            else if (rb.velocity.x < 0)
+            {
+                thisPlayersTransform.rotation = new Quaternion(thisPlayersTransform.rotation.x, 180, thisPlayersTransform.rotation.y, thisPlayersTransform.rotation.x);
+                playerAnimator.SetBool("run", true);
+            }
+            
         }
 
-        else if (rb.velocity.x < 0 )
+        if(!isGrounded)
         {
-            thisPlayersTransform.rotation = new Quaternion(thisPlayersTransform.rotation.x,180,thisPlayersTransform.rotation.y, thisPlayersTransform.rotation.x);
-            playerAnimator.SetBool("run", true);
+            if (rb.velocity.y >0)
+            {
+               playerAnimator.SetBool ("jump", true);
+               playerAnimator.SetBool("fall", false);
+            }
+
+            else if (rb.velocity.y < 0)
+            {
+                playerAnimator.SetBool("jump", false);
+                playerAnimator.SetBool("fall", true);
+            }
         }
 
-        else 
+
+        else if(rb.velocity.x ==  0)
         {
+            playerAnimator.SetBool("run", false);
+            playerAnimator.SetBool("jump", false);
+            playerAnimator.SetBool("fall", false);
             playerAnimator.Play("PlayerAnimations");
         }
     }
